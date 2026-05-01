@@ -22,8 +22,28 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; color: blue;'>THE VALUE INVESTING REPORT</h1>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; color: blue;'>BY MERIAM.BUSINESS</h1>", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    /* This makes the first part big */
+    .main-title {
+        font-size: 45px !important;
+        font-weight: 800 !important;
+        color: #0000FF;
+        text-align: center;
+        margin-bottom: 0px;
+    }
+    /* This makes the brand name slightly smaller to fit on one line */
+    .brand-name {
+        font-size: 30px !important;
+        font-weight: 800 !important;
+        color: #0000FF;
+        text-align: center;
+    }
+    </style>
+    
+    <p class="main-title">THE VALUE INVESTING REPORT</p>
+    <p class="brand-name">BY MERIAM.BUSINESS</p>
+    """, unsafe_allow_html=True)
 
 def meriam_value_investing_report():
     # 1. UNIVERSAL INPUT
