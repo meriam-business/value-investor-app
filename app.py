@@ -4,7 +4,7 @@ import yfinance as yf
 # 1. PAGE CONFIGURATION
 st.set_page_config(page_title="Meriam.business | Value Investing", page_icon="📈")
 
-# 2. MASTER CSS (Keep your bold, mobile-first look)
+# 2. MASTER CSS
 st.markdown("""
     <style>
     .stApp p, .stApp span, .stApp label, .stApp div { font-weight: 900 !important; }
@@ -29,50 +29,72 @@ st.markdown("""
 st.markdown('<p class="main-title">THE VALUE INVESTING GUIDE</p>', unsafe_allow_html=True)
 st.markdown('<p class="brand-name">BY MERIAM.BUSINESS</p>', unsafe_allow_html=True)
 
-# Initialize Session State to track if we should show the results
+# Session State Initialization
 if 'show_results' not in st.session_state:
     st.session_state.show_results = False
 
 def meriam_value_investing_report():
-    # Only show inputs if results are NOT currently being shown
     if not st.session_state.show_results:
         target_ticker = st.text_input("Enter Ticker (e.g. AAPL, MSFT, DH.TN):").upper()
         
         if target_ticker:
-            # We skip live fetching for now to ensure Manual Mode works perfectly as you requested
-            st.info(f"Manual Mode Activated for: {target_ticker}")
-            
-            # Organize inputs in columns for better layout
-            col_a, col_b = st.columns(2)
-            with col_a:
-                per = st.number_input("1. Enter PER:", value=0.0)
-                pb = st.number_input("2. Enter P/B Ratio:", value=0.0)
-                roe = st.number_input("3. Enter ROE %:", value=0.0) / 100
-                de = st.number_input("4. Enter Debt-to-Equity:", value=0.0)
-                cash_more_debt = st.radio("5. More Cash than Debt?", ('Yes', 'No')) == 'Yes'
-            with col_b:
-                curr_ratio = st.number_input("6. Current Ratio:", value=0.0)
-                net_margin = st.number_input("7. Net Profit Margin %:", value=0.0) / 100
-                div_yield = st.number_input("8. Dividend Yield %:", value=0.0) / 100
-                rev_growth = st.number_input("9. Revenue Growth %:", value=0.0) / 100
-                fcf_pos = st.radio("10. Is Free Cash Flow Positive?", ('Yes', 'No')) == 'Yes'
+            # --- ATTEMPT DATA DOWNLOAD (The Warning Logic) ---
+            try:
+                stock = yf.Ticker(target_ticker)
+                info = stock.info
+                # If per is missing, we assume the data fetch failed
+                if not info or info.get('trailingPE') is None:
+                    st.warning(f"⚠️ Data for {target_ticker} is unavailable on Yahoo. Please enter ratios manually below.")
+                    is_manual = True
+                else:
+                    st.success(f"✅ Live Data Found for {target_ticker}!")
+                    is_manual = False
+            except Exception:
+                st.warning(f"⚠️ Connection Error. Switching to Manual Mode for {target_ticker}.")
+                is_manual = True
 
-            # THE BUTTON
+            # --- INPUT SECTION ---
+            col_a, col_b = st.columns(2)
+            
+            if is_manual:
+                with col_a:
+                    per = st.number_input("1. PER:", value=0.0)
+                    pb = st.number_input("2. P/B Ratio:", value=0.0)
+                    roe = st.number_input("3. ROE %:", value=0.0) / 100
+                    de = st.number_input("4. Debt-to-Equity:", value=0.0)
+                    cash = st.radio("5. Cash > Debt?", ('Yes', 'No')) == 'Yes'
+                with col_b:
+                    curr = st.number_input("6. Current Ratio:", value=0.0)
+                    margin = st.number_input("7. Net Margin %:", value=0.0) / 100
+                    div = st.number_input("8. Div Yield %:", value=0.0) / 100
+                    growth = st.number_input("9. Rev Growth %:", value=0.0) / 100
+                    fcf = st.radio("10. Positive FCF?", ('Yes', 'No')) == 'Yes'
+            else:
+                # Auto-fill values if data was successfully found
+                per = info.get('trailingPE', 0)
+                pb = info.get('priceToBook', 0)
+                roe = info.get('returnOnEquity', 0)
+                de = (info.get('debtToEquity', 0) or 0) / 100
+                cash = (info.get('totalCash', 0) or 0) > (info.get('totalDebt', 0) or 0)
+                curr = info.get('currentRatio', 0)
+                margin = info.get('profitMargins', 0)
+                div = info.get('dividendYield', 0) or 0
+                growth = info.get('revenueGrowth', 0) or 0
+                fcf = (info.get('freeCashflow', 0) or 0) > 0
+                st.info("Live data loaded. Click below to see your report cards.")
+
             if st.button("GENERATE REPORT"):
-                # Save data to session state so we don't lose it when the page reloads
                 st.session_state.data = {
                     'ticker': target_ticker, 'per': per, 'pb': pb, 'roe': roe, 'de': de,
-                    'cash': cash_more_debt, 'curr': curr_ratio, 'margin': net_margin,
-                    'div': div_yield, 'growth': rev_growth, 'fcf': fcf_pos
+                    'cash': cash, 'curr': curr, 'margin': margin,
+                    'div': div, 'growth': growth, 'fcf': fcf
                 }
                 st.session_state.show_results = True
                 st.rerun()
 
-    # If results are toggled ON, show the cards and hide the inputs
     else:
+        # --- REPORT DISPLAY (Inputs are hidden) ---
         d = st.session_state.data
-        
-        # Scoring Logic
         score = 0
         if 0 < d['per'] < 15: score += 1
         if 0 < d['pb'] < 3: score += 1
@@ -86,31 +108,27 @@ def meriam_value_investing_report():
         if d['fcf']: score += 1
 
         st.markdown('<div class="underlined-text">THE VALUE INVESTING REPORT</div>', unsafe_allow_html=True)
-        
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f'<div class="metric-card">Stock: {d["ticker"]}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">PER: {d["per"]:.2f}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">P/B: {d["pb"]:.2f}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">ROE: {d["roe"] * 100:.2f}%</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="metric-card">Debt-to-Eq: {d["de"]:.2f}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card">Debt/Eq: {d["de"]:.2f}</div>', unsafe_allow_html=True)
         with col2:
             st.markdown(f'<div class="metric-card">Margin: {d["margin"] * 100:.2f}%</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">Div Yield: {d["div"] * 100:.2f}%</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">Current Ratio: {d["curr"]:.2f}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="metric-card">Rev Growth: {d["growth"] * 100:.2f}%</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card">Growth: {d["growth"] * 100:.2f}%</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">Positive FCF: {"YES" if d["fcf"] else "NO"}</div>', unsafe_allow_html=True)
 
         st.markdown(f"## FINAL SCORE: {score} / 10")
-        
         if score >= 8: verdict = "HIGHLY INVEST"
         elif 5 <= score < 8: verdict = "RECOMMEND"
         elif 3 <= score < 5: verdict = "WAIT"
         else: verdict = "DO NOT INVEST"
-            
         st.write(f"### FINAL RESULT: {verdict}")
 
-        # Add a "Go Back" button to reset the view
         if st.button("← ANALYZE ANOTHER STOCK"):
             st.session_state.show_results = False
             st.rerun()
@@ -118,4 +136,4 @@ def meriam_value_investing_report():
 # 4. EXECUTION
 meriam_value_investing_report()
 
-st.markdown('<div class="disclaimer"><b>DISCLAIMER:</b> This tool is for educational purposes only. Meriam.business does not provide professional financial advice.</div>', unsafe_allow_html=True)
+st.markdown('<div class="disclaimer"><b>DISCLAIMER:</b> For educational use only. Meriam.business does not provide financial advice.</div>', unsafe_allow_html=True)
