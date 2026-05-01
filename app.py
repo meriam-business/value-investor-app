@@ -1,65 +1,92 @@
 import streamlit as st
 import yfinance as yf
 
+# 1. PAGE CONFIGURATION
 st.set_page_config(page_title="Meriam.business | Value Investing", page_icon="📈")
 
-# 1. ALL YOUR STYLES IN ONE PLACE
+# 2. THE MASTER STYLE BLOCK
 st.markdown("""
     <style>
-    /* Global Boldness */
-    .stApp p, .stApp span, .stApp label {
-        font-weight: bold !important;
+    /* Global Boldness - En Mode Gras */
+    .stApp p, .stApp span, .stApp label, .stApp div {
+        font-weight: 900 !important;
     }
-    /* Background Gradient */
+
+    /* Background Gradient and Main Colors */
     .stApp {
         background: linear-gradient(to bottom right, #f0f2f6, #0068C9);
         color: #1E3A8A;
     }
-    /* Titles */
+
+    /* Pushing the content down from the very top */
+    [data-testid="stAppViewBlockContainer"] {
+        padding-top: 5rem !important;
+    }
+
+    /* Main Title Styling */
     .main-title {
         font-size: 42px !important;
         font-weight: 900 !important;
         color: #0000FF !important;
         text-align: center;
+        margin-top: 20px !important;
         margin-bottom: 0px;
+        line-height: 1.1;
     }
+
+    /* Brand Name Styling */
     .brand-name {
         font-size: 26px !important;
         font-weight: 900 !important;
         color: #0000FF !important;
         text-align: center;
         margin-bottom: 10px;
+        letter-spacing: 1px;
     }
-    /* The Underline Effect */
+
+    /* Underlined Data Headers (Shrink-wraps to text width) */
     .underlined-text {
         display: inline-block;
-        border-bottom: 3px solid #0000FF;
+        border-bottom: 4px solid #0000FF;
         padding-bottom: 2px;
-        margin-bottom: 10px;
+        margin-top: 15px;
+        margin-bottom: 15px;
         font-weight: 900 !important;
-        font-size: 20px;
+        font-size: 24px;
+        color: #0000FF;
+    }
+
+    /* Making the input label more visible */
+    .stTextInput label {
+        font-size: 18px !important;
+        color: #1E3A8A !important;
     }
     </style>
-    
-    <p class="main-title">THE VALUE INVESTING GUIDE</p>
-    <p class="brand-name">BY MERIAM.BUSINESS</p>
     """, unsafe_allow_html=True)
 
-# 2. THE SPACE YOU WANTED
+# 3. HEADER SECTION
+st.markdown('<p class="main-title">THE VALUE INVESTING GUIDE</p>', unsafe_allow_html=True)
+st.markdown('<p class="brand-name">BY MERIAM.BUSINESS</p>', unsafe_allow_html=True)
+
+# 4. VERTICAL SPACING (Pushes the input box down)
+st.markdown("&nbsp;", unsafe_allow_html=True)
 st.markdown("&nbsp;", unsafe_allow_html=True)
 st.markdown("&nbsp;", unsafe_allow_html=True)
 
-# 3. THE FUNCTION
+# 5. THE CORE APP LOGIC
 def meriam_value_investing_report():
-    target_ticker = st.text_input("Enter the Stock Ticker (e.g AAPL, MSFT etc ): ").upper()
+    # User Input
+    target_ticker = st.text_input("Enter the Stock Ticker (e.g AAPL, MSFT, DH.TN):").upper()
     
     if target_ticker:
-        st.write(f"🔍 GENERATING VALUE INVESTING REPORT: {target_ticker}")
+        st.markdown(f"### 🔍 GENERATING VALUE INVESTING REPORT: {target_ticker}")
+        
+        # Data Acquisition
         stock = yf.Ticker(target_ticker)
         info = stock.info
-        
         per = info.get('trailingPE')
         
+        # Handling Missing Data (Manual Mode for Tunisian Stocks)
         if per is None or per == 0:
             st.warning(f"⚠️ Yahoo data not found for {target_ticker}. Manual Mode Activated.")
             per = st.number_input("1. Enter PER:", value=0.0)
@@ -77,16 +104,16 @@ def meriam_value_investing_report():
             pb = info.get('priceToBook', 0)
             roe = info.get('returnOnEquity', 0)
             de = (info.get('debtToEquity', 0) or 0) / 100
-            cash_more_debt = info.get('totalCash', 0) > info.get('totalDebt', 0)
+            cash_more_debt = (info.get('totalCash', 0) or 0) > (info.get('totalDebt', 0) or 0)
             curr_ratio = info.get('currentRatio', 0)
             net_margin = info.get('profitMargins', 0)
             div_yield = info.get('dividendYield', 0) or 0
             rev_growth = info.get('revenueGrowth', 0) or 0
             fcf_pos = (info.get('freeCashflow', 0) or 0) > 0
 
-        # SCORING
+        # Scoring Logic
         score = 0
-        if 0 < per < 10: score += 1
+        if 0 < per < 15: score += 1
         if 0 < pb < 3: score += 1
         if roe > 0.15: score += 1
         if de < 1.0: score += 1
@@ -97,8 +124,10 @@ def meriam_value_investing_report():
         if rev_growth > 0: score += 1
         if fcf_pos: score += 1
 
-        # OUTPUT WITH THE UNDERLINES
-        st.markdown(f'<div class="underlined-text">Stock Name: {target_ticker}</div>', unsafe_allow_html=True)
+        # Professional Output Section
+        st.markdown('<div class="underlined-text">THE VALUE INVESTING REPORT</div>', unsafe_allow_html=True)
+        
+        st.write(f"**Stock Name:** {target_ticker}")
         st.write(f"**PER:** {per:.2f}")
         st.write(f"**P/B:** {pb:.2f}")
         st.write(f"**ROE:** {roe * 100:.2f}%")
@@ -108,8 +137,10 @@ def meriam_value_investing_report():
         st.write(f"**Current Ratio:** {curr_ratio:.2f}")
         st.write(f"**Positive FCF:** {'YES' if fcf_pos else 'NO'}")
         
+        st.markdown("&nbsp;", unsafe_allow_html=True)
         st.subheader(f"FINAL SCORE: {score} / 10")
         
+        # Decision Logic
         if score >= 8: verdict = "HIGHLY INVEST"
         elif 5 <= score < 8: verdict = "RECOMMEND"
         elif 3 <= score < 5: verdict = "WAIT"
@@ -117,5 +148,6 @@ def meriam_value_investing_report():
             
         st.write(f"### FINAL RESULT: {verdict}")
 
-# 4. RUN IT
-meriam_value_investing_report()
+# 6. EXECUTION
+if __name__ == "__main__":
+    meriam_value_investing_report()
