@@ -24,20 +24,20 @@ st.markdown("""
     """, unsafe_allow_html=True)
 st.markdown("""
     <style>
-    /* This makes the first part big */
     .main-title {
-        font-size: 45px !important;
-        font-weight: 800 !important;
-        color: #0000FF;
+        font-size: 42px !important;
+        font-weight: 900 !important;
+        color: #0000FF !important; /* This is the vibrant electric blue */
         text-align: center;
         margin-bottom: 0px;
+        line-height: 1.1;
     }
-    /* This makes the brand name slightly smaller to fit on one line */
     .brand-name {
-        font-size: 30px !important;
-        font-weight: 800 !important;
-        color: #0000FF;
+        font-size: 26px !important;
+        font-weight: 900 !important;
+        color: #0000FF !important; /* Matching vibrant blue */
         text-align: center;
+        letter-spacing: 1px;
     }
     </style>
     
