@@ -21,7 +21,7 @@ st.markdown("""
     .main-title { font-size: 32px !important; font-weight: 900 !important; color: #0000FF !important; text-align: center; margin-bottom: 0px; }
     .brand-name { font-size: 20px !important; font-weight: 900 !important; color: #0000FF !important; text-align: center; margin-bottom: 20px; }
     .underlined-text { display: inline-block; border-bottom: 4px solid #0000FF; margin-bottom: 15px; font-weight: 900 !important; font-size: 22px; }
-    .disclaimer { font-size: 11px !important; color: #444444 !important; text-align: center; margin-top: 40px; padding: 15px; border-top: 1px solid #0068C9; }
+    .disclaimer { font-size: 11px !important; color: #444444 !important; text-align: center; margin-top: 40px; padding: 15px; border-top: 1px solid #0068C9; width: 100%; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -53,7 +53,6 @@ def meriam_value_investing_report():
             if is_manual:
                 col_a, col_b = st.columns(2)
                 with col_a:
-                    # format="%g" ensures 0.0 shows as 0, and 2.4 shows as 2.4
                     per = st.number_input("1. PER", value=0.0, step=0.1, format="%g")
                     pb = st.number_input("2. P/B Ratio", value=0.0, step=0.1, format="%g")
                     roe = st.number_input("3. ROE %", value=0.0, step=0.1, format="%g") / 100
@@ -85,7 +84,6 @@ def meriam_value_investing_report():
 
     else:
         d = st.session_state.data
-        # --- SCORING LOGIC ---
         score = 0
         if 0 < d['per'] < 15: score += 1
         if 0 < d['pb'] < 3: score += 1
@@ -119,4 +117,14 @@ def meriam_value_investing_report():
             st.session_state.show_results = False
             st.rerun()
 
+# 4. EXECUTION
 meriam_value_investing_report()
+
+# RESTORED FOOTER
+st.markdown("""
+    <div class="disclaimer">
+        <b>DISCLAIMER:</b> This tool is for educational purposes only. 
+        Meriam.business does not provide professional financial advice. 
+        Investing in stocks involves risk.
+    </div>
+    """, unsafe_allow_html=True)
