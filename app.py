@@ -128,4 +128,4 @@ def meriam_value_investing_report():
             st.rerun()
 
 meriam_value_investing_report()
-st.markdown('<div class="disclaimer"><b>DISCLAIMER:</b> For educational use only. Meriam.business does not provide financial advice.</div>', unsafe_allow_html=True)
+st.markdown('<div class="disclaimer"><b>DISCLAIMER:</b> For educational use only. Meriam.business does not provide professional advice.</div>', unsafe_allow_html=True)
