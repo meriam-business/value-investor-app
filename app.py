@@ -22,7 +22,8 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; color: blue;'>THE VALUE INVESTING REPORT BY MERIAM.BUSINESS</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: blue;'>THE VALUE INVESTING REPORT</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: blue;'>BY MERIAM.BUSINESS</h1>", unsafe_allow_html=True)
 
 def meriam_value_investing_report():
     # 1. UNIVERSAL INPUT
