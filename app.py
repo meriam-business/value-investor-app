@@ -34,7 +34,7 @@ if 'show_results' not in st.session_state:
 
 def meriam_value_investing_report():
     if not st.session_state.show_results:
-        target_ticker = st.text_input("Enter Ticker (e.g. AAPL, MSFT, DH.TN...):", placeholder="TYPE HERE...").upper()
+        target_ticker = st.text_input("Enter Ticker (e.g. DH.TN):", placeholder="TYPE HERE...").upper()
         
         if target_ticker:
             try:
@@ -87,7 +87,7 @@ def meriam_value_investing_report():
         score = 0
         if 0 < d['per'] < 15: score += 1
         if 0 < d['pb'] < 3: score += 1
-        if d['roe'] > 0.15: score += 1
+        if d['roe'] >= 0.15: score += 1
         if d['de'] < 1.0: score += 1
         if d['cash']: score += 1
         if d['curr'] >= 1.5: score += 1
@@ -103,28 +103,22 @@ def meriam_value_investing_report():
             st.markdown(f'<div class="metric-card">PER: {d["per"]:.2f}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">P/B: {d["pb"]:.2f}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">ROE: {d["roe"] * 100:.1f}%</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card">Debt-to-Eq: {d["de"]:.2f}</div>', unsafe_allow_html=True)
         with col2:
             st.markdown(f'<div class="metric-card">Margin: {d["margin"] * 100:.1f}%</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">Div Yield: {d["div"] * 100:.1f}%</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">Current Ratio: {d["curr"]:.2f}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">Growth: {d["growth"] * 100:.1f}%</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card">Positive FCF: {"YES" if d["fcf"] else "NO"}</div>', unsafe_allow_html=True)
 
         st.markdown(f"## FINAL SCORE: {score} / 10")
-        verdict = "HIGHLY INVEST" if score >= 8 else "RECOMMEND" if score >= 5 else "WAIT" if score >= 3 else "DO NOT INVEST"
+        verdict = "HIGHLY INVEST" if score >= 8 else "MODERATELY INVEST" if score >= 5 else "WAIT" if score >= 3 else "DO NOT INVEST!"
         st.write(f"### FINAL RESULT: {verdict}")
 
         if st.button("← ANALYZE ANOTHER"):
             st.session_state.show_results = False
             st.rerun()
 
-# 4. EXECUTION
 meriam_value_investing_report()
 
-# RESTORED FOOTER
-st.markdown("""
-    <div class="disclaimer">
-        <b>DISCLAIMER:</b> This tool is for educational purposes only. 
-        Meriam.business does not provide professional financial advice. 
-        Investing in stocks involves risk.
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown('<div class="disclaimer"><b>DISCLAIMER:</b> For educational use only. Meriam.business does not provide professional financial advice.Ivesting in stocks involves risk.</div>', unsafe_allow_html=True)
