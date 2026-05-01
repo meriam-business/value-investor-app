@@ -22,11 +22,6 @@ st.markdown("""
     .brand-name { font-size: 20px !important; font-weight: 900 !important; color: #0000FF !important; text-align: center; margin-bottom: 20px; }
     .underlined-text { display: inline-block; border-bottom: 4px solid #0000FF; margin-bottom: 15px; font-weight: 900 !important; font-size: 22px; }
     .disclaimer { font-size: 11px !important; color: #444444 !important; text-align: center; margin-top: 40px; padding: 15px; border-top: 1px solid #0068C9; }
-    
-    /* Clean up input boxes for mobile */
-    .stNumberInput div div input {
-        font-size: 18px !important;
-    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -39,7 +34,7 @@ if 'show_results' not in st.session_state:
 
 def meriam_value_investing_report():
     if not st.session_state.show_results:
-        target_ticker = st.text_input("Enter Ticker (e.g. AAPL, MSFT, DH.TN):", placeholder="TYPE HERE...").upper()
+        target_ticker = st.text_input("Enter Ticker (e.g. DH.TN):", placeholder="TYPE HERE...").upper()
         
         if target_ticker:
             try:
@@ -49,27 +44,26 @@ def meriam_value_investing_report():
                     st.warning(f"⚠️ Data for {target_ticker} unavailable. Manual Mode:")
                     is_manual = True
                 else:
-                    st.success(f"✅ Data Found for {target_ticker}!")
+                    st.success(f"✅ Data Found!")
                     is_manual = False
             except Exception:
                 st.warning(f"⚠️ Connection Error. Manual Mode:")
                 is_manual = True
 
-            col_a, col_b = st.columns(2)
-            
             if is_manual:
+                col_a, col_b = st.columns(2)
                 with col_a:
-                    # Using format="%.2f" but value=0 to keep it clean
-                    per = st.number_input("1. PER", value=0.0, step=0.1, format="%.2f")
-                    pb = st.number_input("2. P/B Ratio", value=0.0, step=0.1, format="%.2f")
-                    roe = st.number_input("3. ROE %", value=0, step=1) / 100
-                    de = st.number_input("4. Debt-to-Equity", value=0.0, step=0.1)
+                    # format="%g" ensures 0.0 shows as 0, and 2.4 shows as 2.4
+                    per = st.number_input("1. PER", value=0.0, step=0.1, format="%g")
+                    pb = st.number_input("2. P/B Ratio", value=0.0, step=0.1, format="%g")
+                    roe = st.number_input("3. ROE %", value=0.0, step=0.1, format="%g") / 100
+                    de = st.number_input("4. Debt-to-Equity", value=0.0, step=0.1, format="%g")
                     cash = st.radio("5. Cash > Debt?", ('Yes', 'No')) == 'Yes'
                 with col_b:
-                    curr = st.number_input("6. Current Ratio", value=0.0, step=0.1)
-                    margin = st.number_input("7. Net Margin %", value=0, step=1) / 100
-                    div = st.number_input("8. Div Yield %", value=0, step=1) / 100
-                    growth = st.number_input("9. Rev Growth %", value=0, step=1) / 100
+                    curr = st.number_input("6. Current Ratio", value=0.0, step=0.1, format="%g")
+                    margin = st.number_input("7. Net Margin %", value=0.0, step=0.1, format="%g") / 100
+                    div = st.number_input("8. Div Yield %", value=0.0, step=0.1, format="%g") / 100
+                    growth = st.number_input("9. Rev Growth %", value=0.0, step=0.1, format="%g") / 100
                     fcf = st.radio("10. Positive FCF?", ('Yes', 'No')) == 'Yes'
             else:
                 per = info.get('trailingPE', 0); pb = info.get('priceToBook', 0)
@@ -78,7 +72,7 @@ def meriam_value_investing_report():
                 curr = info.get('currentRatio', 0); margin = info.get('profitMargins', 0)
                 div = info.get('dividendYield', 0) or 0; growth = info.get('revenueGrowth', 0) or 0
                 fcf = (info.get('freeCashflow', 0) or 0) > 0
-                st.info("Click below to see the report.")
+                st.info("Live data loaded.")
 
             if st.button("GENERATE REPORT"):
                 st.session_state.data = {
@@ -91,6 +85,7 @@ def meriam_value_investing_report():
 
     else:
         d = st.session_state.data
+        # --- SCORING LOGIC ---
         score = 0
         if 0 < d['per'] < 15: score += 1
         if 0 < d['pb'] < 3: score += 1
@@ -109,18 +104,15 @@ def meriam_value_investing_report():
             st.markdown(f'<div class="metric-card">Stock: {d["ticker"]}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">PER: {d["per"]:.2f}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">P/B: {d["pb"]:.2f}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="metric-card">ROE: {d["roe"] * 100:.2f}%</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card">ROE: {d["roe"] * 100:.1f}%</div>', unsafe_allow_html=True)
         with col2:
-            st.markdown(f'<div class="metric-card">Margin: {d["margin"] * 100:.2f}%</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card">Margin: {d["margin"] * 100:.1f}%</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card">Div Yield: {d["div"] * 100:.1f}%</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="metric-card">Current Ratio: {d["curr"]:.2f}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="metric-card">Growth: {d["growth"] * 100:.2f}%</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="metric-card">Positive FCF: {"YES" if d["fcf"] else "NO"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="metric-card">Growth: {d["growth"] * 100:.1f}%</div>', unsafe_allow_html=True)
 
         st.markdown(f"## FINAL SCORE: {score} / 10")
-        if score >= 8: verdict = "HIGHLY INVEST"
-        elif 5 <= score < 8: verdict = "RECOMMEND"
-        elif 3 <= score < 5: verdict = "WAIT"
-        else: verdict = "DO NOT INVEST"
+        verdict = "HIGHLY INVEST" if score >= 8 else "RECOMMEND" if score >= 5 else "WAIT" if score >= 3 else "DO NOT INVEST"
         st.write(f"### FINAL RESULT: {verdict}")
 
         if st.button("← ANALYZE ANOTHER"):
@@ -128,4 +120,3 @@ def meriam_value_investing_report():
             st.rerun()
 
 meriam_value_investing_report()
-st.markdown('<div class="disclaimer"><b>DISCLAIMER:</b> For educational use only. Meriam.business does not provide professional advice.</div>', unsafe_allow_html=True)
