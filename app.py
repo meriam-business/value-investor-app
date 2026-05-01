@@ -12,15 +12,21 @@ st.markdown("""
         font-weight: 900 !important;
     }
 
-    /* Background Gradient and Main Colors */
+    /* Background Gradient */
     .stApp {
         background: linear-gradient(to bottom right, #f0f2f6, #0068C9);
         color: #1E3A8A;
     }
 
-    /* Pushing the content down from the very top */
+    /* THE FIX FOR THE "TOO HIGH" ISSUE */
+    /* This pushes the entire content area down from the top bar */
     [data-testid="stAppViewBlockContainer"] {
-        padding-top: 5rem !important;
+        padding-top: 10rem !important; /* Increased from 5rem to 10rem */
+    }
+
+    /* Extra safety to hide the invisible Streamlit header space */
+    header {
+        visibility: hidden;
     }
 
     /* Main Title Styling */
@@ -29,7 +35,6 @@ st.markdown("""
         font-weight: 900 !important;
         color: #0000FF !important;
         text-align: center;
-        margin-top: 20px !important;
         margin-bottom: 0px;
         line-height: 1.1;
     }
@@ -44,7 +49,7 @@ st.markdown("""
         letter-spacing: 1px;
     }
 
-    /* Underlined Data Headers (Shrink-wraps to text width) */
+    /* Underlined Data Headers */
     .underlined-text {
         display: inline-block;
         border-bottom: 4px solid #0000FF;
@@ -55,12 +60,6 @@ st.markdown("""
         font-size: 24px;
         color: #0000FF;
     }
-
-    /* Making the input label more visible */
-    .stTextInput label {
-        font-size: 18px !important;
-        color: #1E3A8A !important;
-    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -68,8 +67,7 @@ st.markdown("""
 st.markdown('<p class="main-title">THE VALUE INVESTING GUIDE</p>', unsafe_allow_html=True)
 st.markdown('<p class="brand-name">BY MERIAM.BUSINESS</p>', unsafe_allow_html=True)
 
-# 4. VERTICAL SPACING (Pushes the input box down)
-st.markdown("&nbsp;", unsafe_allow_html=True)
+# 4. VERTICAL SPACING (Pushes the input box down further)
 st.markdown("&nbsp;", unsafe_allow_html=True)
 st.markdown("&nbsp;", unsafe_allow_html=True)
 
