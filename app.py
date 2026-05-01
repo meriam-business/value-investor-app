@@ -54,10 +54,10 @@ st.markdown("""
     <p class="main-title">THE VALUE INVESTING GUIDE</p>
     <p class="brand-name">BY MERIAM.BUSINESS</p>
     """, unsafe_allow_html=True)
-    st.write(" ")
-    st.write(" ")
-    st.write(" ")
-    st.write(" ")
+    st.markdown("&nbsp;", unsafe_allow_html=True)
+    st.markdown("&nbsp;", unsafe_allow_html=True)
+    st.markdown("&nbsp;", unsafe_allow_html=True)
+    st.markdown("&nbsp;", unsafe_allow_html=True)
     target_ticker = st.text_input("Enter the Stock Ticker (e.g AAPL, MSFT etc ): ").upper()
     
     if target_ticker:
