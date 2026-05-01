@@ -121,4 +121,4 @@ def meriam_value_investing_report():
 
 meriam_value_investing_report()
 
-st.markdown('<div class="disclaimer"><b>DISCLAIMER:</b> For educational use only. Meriam.business does not provide professional financial advice.Ivesting in stocks involves risk.</div>', unsafe_allow_html=True)
+st.markdown('<div class="disclaimer"><b>DISCLAIMER:</b> For educational use only. Meriam.business does not provide professional financial advice. Investing in stocks involves risk.</div>', unsafe_allow_html=True)
