@@ -108,9 +108,8 @@ def meriam_value_investing_report():
 
         # --- THE PROFESSIONAL OUTPUT ---
         
-        st.text(f"text-align: center          THE VALUE INVESTING REPORT")
+        st.text(f"          THE VALUE INVESTING REPORT")
         st.write(f"**Stock Name:** {target_ticker}")
-        st.markdown(f'<div class="underlined-text">Stock Name: {ticker}</div>', unsafe_allow_html=True)
         st.write(f"**PER:** {per:.2f}")
         st.write(f"**P/B:** {pb:.2f}")
         st.write(f"**ROE:** {roe * 100:.2f}%")
@@ -121,7 +120,7 @@ def meriam_value_investing_report():
         st.write(f"**Positive FCF:** {'YES' if fcf_pos else 'NO'}")
        
         st.subheader(f"FINAL SCORE: {score} / 10")
-        st.markdown(f'<div class="underlined-text">FINAL SCORE: {score} / 10</div>', unsafe_allow_html=True)
+       
         # --- YOUR CUSTOM GRADING SCALE ---
         if score >= 8:
             verdict = "HIGHLY INVEST"
