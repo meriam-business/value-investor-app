@@ -34,7 +34,7 @@ if 'show_results' not in st.session_state:
 
 def meriam_value_investing_report():
     if not st.session_state.show_results:
-        target_ticker = st.text_input("Enter Ticker (e.g. DH.TN):", placeholder="TYPE HERE...").upper()
+        target_ticker = st.text_input("Enter Ticker (e.g. AAPL, MSFT, DH.TN...):", placeholder="TYPE HERE...").upper()
         
         if target_ticker:
             try:
