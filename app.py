@@ -27,7 +27,7 @@ st.markdown("""
     .main-title {
         font-size: 42px !important;
         font-weight: 900 !important;
-        color: #0000FF !important; /* This is the vibrant electric blue */
+        color: #0000FF !important;
         text-align: center;
         margin-bottom: 0px;
         line-height: 1.1;
@@ -35,16 +35,25 @@ st.markdown("""
     .brand-name {
         font-size: 26px !important;
         font-weight: 900 !important;
-        color: #0000FF !important; /* Matching vibrant blue */
+        color: #0000FF !important;
         text-align: center;
         letter-spacing: 1px;
     }
+
+    /* PASTE THIS NEW PART HERE */
+    .underlined-text {
+        display: inline-block; /* Makes line end when text ends */
+        border-bottom: 3px solid #0000FF; /* The lively blue line */
+        padding-bottom: 2px;
+        margin-bottom: 10px;
+        font-weight: 900 !important;
+        font-size: 20px;
+    }
     </style>
     
-    <p class="main-title">THE VALUE INVESTING REPORT</p>
+    <p class="main-title">THE VALUE INVESTING GUIDE</p>
     <p class="brand-name">BY MERIAM.BUSINESS</p>
     """, unsafe_allow_html=True)
-
 def meriam_value_investing_report():
     # 1. UNIVERSAL INPUT
     target_ticker = st.text_input("Enter the Stock Ticker (e.g AAPL, MSFT etc ): ").upper()
@@ -98,11 +107,10 @@ def meriam_value_investing_report():
         if fcf_pos: score += 1
 
         # --- THE PROFESSIONAL OUTPUT ---
-        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
-        st.text(f"          THE VALUE INVESTING REPORT")
-        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
+        
+        st.text(f"text-align: center          THE VALUE INVESTING REPORT")
         st.write(f"**Stock Name:** {target_ticker}")
-        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="underlined-text">Stock Name: {ticker}</div>', unsafe_allow_html=True)
         st.write(f"**PER:** {per:.2f}")
         st.write(f"**P/B:** {pb:.2f}")
         st.write(f"**ROE:** {roe * 100:.2f}%")
@@ -111,9 +119,9 @@ def meriam_value_investing_report():
         st.write(f"**Dividend Yield:** {div_yield * 100:.2f}%")
         st.write(f"**Current Ratio:** {curr_ratio:.2f}")
         st.write(f"**Positive FCF:** {'YES' if fcf_pos else 'NO'}")
-        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
+       
         st.subheader(f"FINAL SCORE: {score} / 10")
-        
+        st.markdown(f'<div class="underlined-text">FINAL SCORE: {score} / 10</div>', unsafe_allow_html=True)
         # --- YOUR CUSTOM GRADING SCALE ---
         if score >= 8:
             verdict = "HIGHLY INVEST"
@@ -125,7 +133,7 @@ def meriam_value_investing_report():
             verdict = "DO NOT INVEST"
             
         st.write(f"### FINAL RESULT: {verdict}")
-        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
+        
 
 # Run the report generator
 meriam_value_investing_report()
