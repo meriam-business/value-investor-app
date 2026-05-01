@@ -50,7 +50,7 @@ def meriam_value_investing_report():
     target_ticker = st.text_input("Enter the Stock Ticker (e.g AAPL, MSFT etc ): ").upper()
     
     if target_ticker:
-        st.write(f"--- 🔍 GENERATING VALUE INVESTING REPORT: {target_ticker} ---")
+        st.write(f"🔍 GENERATING VALUE INVESTING REPORT: {target_ticker} ")
         stock = yf.Ticker(target_ticker)
         info = stock.info
         
@@ -98,11 +98,11 @@ def meriam_value_investing_report():
         if fcf_pos: score += 1
 
         # --- THE PROFESSIONAL OUTPUT ---
-        st.text("="*50)
+        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
         st.text(f"          THE VALUE INVESTING REPORT")
-        st.text("="*50)
-        st.write(f"**TICKER:** {target_ticker}")
-        st.text("-" * 50)
+        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
+        st.write(f"**Stock Name:** {target_ticker}")
+        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
         st.write(f"**PER:** {per:.2f}")
         st.write(f"**P/B:** {pb:.2f}")
         st.write(f"**ROE:** {roe * 100:.2f}%")
@@ -111,7 +111,7 @@ def meriam_value_investing_report():
         st.write(f"**Dividend Yield:** {div_yield * 100:.2f}%")
         st.write(f"**Current Ratio:** {curr_ratio:.2f}")
         st.write(f"**Positive FCF:** {'YES' if fcf_pos else 'NO'}")
-        st.text("-" * 50)
+        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
         st.subheader(f"FINAL SCORE: {score} / 10")
         
         # --- YOUR CUSTOM GRADING SCALE ---
@@ -125,7 +125,7 @@ def meriam_value_investing_report():
             verdict = "DO NOT INVEST"
             
         st.write(f"### FINAL RESULT: {verdict}")
-        st.text("="*50)
+        st.markdown('<div class="report-divider"></div>', unsafe_allow_html=True)
 
 # Run the report generator
 meriam_value_investing_report()
